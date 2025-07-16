@@ -214,6 +214,64 @@ Then the search order will be:
   nil ; Give up - nothing available, not even an error resource
 )
 ```
+## Search order with BCP 47 style locales
+
+BCP 47 style language tags are standardized codes that identify languages, 
+syntactically composed of subtags in a defined order, separated by hyphens.  
+The standard allows a tag to define a specific language, optionally a script 
+(i.e., alphabet), and a region (i.e., country) to which the tag applies.  
+For example, whereas "en" refers to generally to English, "en-GB" refers to
+English in Great Britain and "en-AU" refers to English in Australia.
+
+Tempura parses requested language tags and creates a specific-to-general search
+order that ignores preferences that seem to contradict earlier preferences.
+This has consequences that are especially significant for fallback expectations.
+
+Given the following Tempura call:
+
+```clojure
+(tr
+  {:default-locale :en-US 
+   :dict
+   {:en-US {:r1 "en-us/r1" :r2 "en-us/r2"}
+    :en-GB {:r1 "en-gb/r1" }
+    :de {:r1 "de/r1"}}}
+  [:en-GB]
+  [:r2]
+  )
+```
+
+The result will be `nil`.  This is due to the way Tempura parses and prioritizes 
+locales given BCP 47 style tags.  The effective search order for this request is:
+
+```clojure
+(or 
+  en-GB/r2
+  en/r2
+)
+```
+
+Even though the default locale is specified as `en-US` and there is an `en-US/r2` resource,
+Tempura is looking for resources from `:en` as a fallback.  Since this key is missing from
+the locale dictionary, the search will fail.  If `tr` were called with the locale search
+parameter as `[:en-GB :en-US]` the result would be the same, due to the way Tempura parses
+and priorizes locales.  _Therefore as a rule, use a simple language tag and not a language-region
+tag as a default-locale._
+
+
+```clojure
+(tr
+  {:default-locale :en 
+   :dict
+   {:en {:r1 "en-us/r1" :r2 "en-us/r2"}
+    :en-GB {:r1 "en-gb/r1" }
+    :de {:r1 "de/r1"}}}
+  [:en-GB]
+  [:r2]
+  )
+```
+
+This returns `"en-us/r2"` 
 
 ## String resources
 
