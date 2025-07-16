@@ -217,9 +217,9 @@ Then the search order will be:
 ## Search order with BCP 47 style locales
 
 BCP 47 style language tags are standardized codes that identify languages, 
-syntactically composed of subtags in a defined order, separated by hyphens.  
+syntactically composed of subtags in a defined order, separated by hyphens.
 The standard allows a tag to define a specific language, optionally a script 
-(i.e., alphabet), and a region (i.e., country) to which the tag applies.  
+(i.e., alphabet), and a region (i.e., country) to which the tag applies. 
 For example, whereas "en" refers to generally to English, "en-GB" refers to
 English in Great Britain and "en-AU" refers to English in Australia.
 
@@ -253,10 +253,10 @@ locales given BCP 47 style tags.  The effective search order for this request is
 
 Even though the default locale is specified as `en-US` and there is an `en-US/r2` resource,
 Tempura is looking for resources from `:en` as a fallback.  Since this key is missing from
-the locale dictionary, the search will fail.  If `tr` were called with the locale search
+the locale dictionary, the search fails.  If `tr` were called with the locale search
 parameter as `[:en-GB :en-US]` the result would be the same, due to the way Tempura parses
 and priorizes locales.  _Therefore as a rule, use a simple language tag and not a language-region
-tag as a default-locale._
+tag as a fallback or default locale._
 
 
 ```clojure
